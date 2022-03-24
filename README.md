@@ -1,64 +1,113 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# TaskManager
+## Features
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+- Register New User
+- Login Existing User
+- View Existing Tasks with Notes
+    - order_by : 'priority','notes'
+    - filters : status, due_date, priority
+- Create task with multiple notes and attachments
 
-## About Laravel
+## Tech
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Application uses a number of requirements to work properly:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- [PHP]  >= 8.1
+- [Laravel] - 9.*
+- [laravel/sanctum] - For API authentication
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Installation
 
-## Learning Laravel
+Clone the repository to your server then execule following commands from the root directory of the application
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+```sh
+composer install
+cp .env.example .env
+php artisan key:generarte
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+After executing the above command just update your db credentials in ".env" file. 
+After adding your db credentials to the .env file, execute the following commands
 
-## Laravel Sponsors
+```sh
+php artisan migrate
+php artisan db:seed
+php artisan serve
+```
+Your application may run on http://localhost:8000
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+## Api Endpoints
 
-### Premium Partners
+The application utilizes fillowing API routes for various tasks
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+| Method | Endpoint | Usage
+| ------ | ------ |  -------
+| POST | [api/register][PlDb] | To register a new user
+| POST | [api/login][PlGh] | To login an existing user
+| GET | [api/tasks][PlGd] | To retrieve all tasks
+| POST | [api/tasks][PlOd] | To create new tasks
+| POST | [api/logout][PlMe] | To logout the user
 
-## Contributing
+Note: All API request must contain following header 
+        `Accept : application/json`
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
 
-## Code of Conduct
+## API Endpoint parameters
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+#### api/register
 
-## Security Vulnerabilities
+| Variable Name | Type | Nullable 
+|---------------|-------|--------
+name|string|N
+email|email|N
+password|string,min:6|N
+password_confirmation|string,min:6|N
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+#### api/login
 
-## License
+| Variable Name | Type | Nullable 
+|---------------|-------|--------
+email|email|N
+password|string|N
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+#### /api/tasks - GET
+
+| Variable Name | Type (Value) | Optional 
+|---------------|-------|--------
+status| String ('New', 'Complete', 'Incomplete')|Y
+priority|String ('High', 'Medium', 'Low')|Y
+due_date|date (Y-m-d)|Y
+notes|int|Y
+order_by|String ('priority', 'notes')|Y
+
+#### /api/tasks - POST
+
+| Variable Name | Type  | Optional 
+|---------------|-------|--------
+subject|string|N
+description|string|N
+start_date|date (Y-m-d)|N
+due_date | date(y-m-d) | N
+satus | enum (New, Incomplete, Complete)|N
+priority | enum(High, Medium, Low) |N
+notes|array()|N
+
+`notes` can be an empty array [] or may contain following subarray
+[
+{"subject":'',"attachment[]":'',"note":''},
+{"subject":'',"attachment[]":'',"note":''}
+.....
+]
+
+where `attachment[]` can be `NULL` or may contain array of files to be attached (max:2mb)
+
+NOTE :
+    - api/tasks - GET/POST
+    - api/logout - POST
+    
+These are secured routes and require access token provided during login or registration to access them.
+
+## Test Credentilas 
+
+ Username : test@abc.com
+ Password : password

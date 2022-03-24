@@ -37,7 +37,7 @@ class TaskRequest extends FormRequest
             'priority'=> ['required', Rule::in(['High', 'Medium', 'Low'])],
             'notes'=>'present|array',
             'notes.*.subject'=>'filled|string',
-            'notes.*.attachment.*' => 'present|file' ,
+            'notes.*.attachment.*' => 'present|file|max:2048' ,
             'notes.*.note' => 'required_with:notes.*.subject|string'     
         ];
     }

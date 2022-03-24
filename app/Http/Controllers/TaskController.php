@@ -16,9 +16,16 @@ class TaskController extends Controller
      */
     public function index(Request $request)
     {
+        $order_by= $request->order_by;
         $tasks = Task::withCount('notes')->with('notes')
-                        ->orderByRaw("FIELD(priority,'High','Medium','Low') ASC")
-                        ->orderBy('notes_count','Desc')
+                        ->when($order_by,function($q,$order_by){
+                            if ($order_by == 'priority') {
+                                return $q->orderByRaw("FIELD(priority,'High','Medium','Low') ASC");
+                            }
+                            if ($order_by == 'notes') {
+                                return $q->orderBy('notes_count', 'Desc');
+                            }
+                        })
                         ->where(function($q) use ($request){
                             if(isset($request->priority)){
                                 return $q->where('priority',$request->priority);
@@ -27,10 +34,10 @@ class TaskController extends Controller
                                 return $q->where('status', $request->status);
                             }
                             if (isset($request->due_date)) {
-                                return $q->where('status', $request->due_date);
+                                return $q->where('due_date', $request->due_date);
                             }
                             if (isset($request->notes)) {
-                                return $q->has('notes','>=',$request->notes);
+                                return $q->has('notes','=',$request->notes);
                             }
                         })->get();
         return response()->json($tasks);
