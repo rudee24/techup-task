@@ -42,11 +42,11 @@ The application utilizes fillowing API routes for various tasks
 
 | Method | Endpoint | Usage
 | ------ | ------ |  -------
-| POST | [api/register][PlDb] | To register a new user
-| POST | [api/login][PlGh] | To login an existing user
-| GET | [api/tasks][PlGd] | To retrieve all tasks
-| POST | [api/tasks][PlOd] | To create new tasks
-| POST | [api/logout][PlMe] | To logout the user
+| POST | [api/register] | To register a new user
+| POST | [api/login] | To login an existing user
+| GET | [api/tasks] | To retrieve all tasks
+| POST | [api/tasks] | To create new tasks
+| POST | [api/logout] | To logout the user
 
 Note: All API request must contain following header 
         `Accept : application/json`
