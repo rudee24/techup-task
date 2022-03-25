@@ -14,12 +14,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 //API route for register new user
-Route::post('/register', [App\Http\Controllers\API\AuthController::class, 'register']);
+Route::post('/register', [App\Http\Controllers\Api\AuthController::class, 'register']);
 //API route for login existing user
-Route::post('/login', [App\Http\Controllers\API\AuthController::class, 'login']);
+Route::post('/login', [App\Http\Controllers\Api\AuthController::class, 'login']);
 //Protected Routes
 Route::group(['middleware'=>['auth:sanctum']],function(){
-    Route::post('logout', [App\Http\Controllers\API\AuthController::class, 'logout']);
+    Route::post('logout', [App\Http\Controllers\Api\AuthController::class, 'logout']);
     Route::resource('tasks', \App\Http\Controllers\TaskController::class);
 });
 
